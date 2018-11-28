@@ -193,3 +193,10 @@
 .vis-range.vis-item.vis-readonly .vis-drag-right {
   cursor: auto;
 }
+
+.vis-item.vis-cluster {
+  vertical-align: center;
+  text-align: center;
+  border-style: solid;
+  border-radius: 2px;
+}

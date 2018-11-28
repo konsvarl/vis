@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Timeline clustering demo</title>  
+  <script src="https://unpkg.com/moment@2.22.2/moment.js"></script> 
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+
+  <script src="../../../dist/vis.js"></script>
+  <link href="../../../dist/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="timeline"></div>
+
+<script type="text/javascript">
+  function getRandomArbitrary(min, max) {
+     return Math.round(Math.random() * (max - min) + min);
+  }
+
+  function getRandomSignum() {
+    return Math.round(Math.random()) ? 1 : -1;
+  }
+
+  var names = ['Group 1', 'Group 2', 'Group 3', 'Group 4'];
+  var groups = new vis.DataSet();
+  let groupsCount = 0;
+  for (var i in names) {
+      var name = names[i];
+      groups.add({id: name, content: name});
+  }
+
+
+  const container = document.getElementById('timeline');
+  const base = moment();
+  const totalDaysCount =10;
+  const offsets = [];
+
+  const before = [];//Array.from(new Array(totalDaysCount),function (val,index) {return index - totalDaysCount + 1;});
+  const after = [];//Array.from(new Array(totalDaysCount),function(val,index) {return index + 1;});
+
+  for (var i in before) {
+      var offset = before[i];
+      offsets.push(offset);
+  }
+	
+  for (var i in after) {
+      var offset = after[i];
+      offsets.push(offset);
+  }
+
+
+
+  const clusterCenters = [];
+  for (let offset in offsets) {
+      const date = base.add('days', offset);
+      clusterCenters.push(date);
+  }
+
+  const timeLineData = [];
+  let nodeIndex = 0;
+  for (var i in clusterCenters) {
+	let clusterCenter= clusterCenters[i];	
+  //for(let clusterCenter of clusterCenters) {
+    for (let itemsInClusterCount = 0; itemsInClusterCount < 20; ++itemsInClusterCount) {
+      const minutesShift = getRandomArbitrary(1, 60)*getRandomSignum();
+      const hoursShift = getRandomArbitrary(1, 5)*getRandomSignum();
+      const secondsShift = getRandomArbitrary(1, 60)*getRandomSignum();
+
+      const start = clusterCenter.clone()
+                  .add(+minutesShift, 'm')
+                  .add(+hoursShift, 'h')
+                  .add(+secondsShift, 's');
+
+      const end = start.clone().add(60, 'm');
+
+      ++nodeIndex;
+
+      const currentGroup = names[getRandomArbitrary(0, names.length - 1)];
+      timeLineData.push({
+        id: nodeIndex,
+        content: "Order: " + nodeIndex,
+        start: start.format('YYYY/MM/DD HH:mm:ss'),
+        end: end.format('YYYY/MM/DD HH:mm:ss'),
+        width: 50,
+        group: currentGroup
+      });
+
+      // for (let verticalIndex = 0; verticalIndex <= 1; ++verticalIndex) {
+      //     timeLineData.push({
+      //     id: ++nodeIndex,
+      //     content: `Order: ${nodeIndex}`,
+      //     start: start.format('YYYY/MM/DD HH:mm:ss'),
+      //     end: end.format('YYYY/MM/DD HH:mm:ss'),
+      //     width: 50
+      //   });
+
+      //   timeLineData.push({
+      //     id: ++nodeIndex,
+      //     content: `Order: ${nodeIndex}`,
+      //     start: start.format('YYYY/MM/DD HH:mm:ss'),
+      //     end: end.format('YYYY/MM/DD HH:mm:ss'),
+      //     width: 50
+      //   });
+      // }
+    }
+  }
+
+  var options = {
+    cluster: {
+      titleTemplate: "Cluster containing {count} events. Zoom in to see the individual events.",
+      // sizeToContent: true
+    },
+    stack: true,
+    maxHeight: 800,
+    height: 800,
+    template: item => {
+      if (item.isCluster) {
+        return `<div style="width:100%;height: 100%; boder-left:1px; border-color:black"> Cluster ${item.data.items.length}</div>`;
+      } 
+
+      return item.content;
+    }
+    
+    // start: new Date(),
+    // end: new Date(1000*60*60*24 + (new Date()).valueOf()),
+  };
+  var timeline = new vis.Timeline(container);
+  timeline.setOptions(options);
+  //timeline.setGroups(groups);
+  //timeline.setItems(timeLineData);
+
+  timeline.setItems([
+      // {
+      //   id: 1,
+      //   content: 'ETL Error',
+      //   start: '2018/11/22 17:08:00',
+      //   end:  '2018/11/22 17:20:00',
+      //   width: 50,
+      // }, {
+      //   id: 2,
+      //   content: 'Price Master Error',
+      //   start: '2018/11/22 17:10:00',
+      //    end:  '2018/11/22 17:15:00',
+      //   width: 50
+      // }, {
+      //   id: 3,
+      //   content: 'Price Master Error',
+      //   start:  '2018/11/22 17:15:00',
+      //   end: '2018/11/22 17:30:00',
+      //   width: 50,
+      // },
+      // {
+      //   id: 4,
+      //   content: 'Price Master Error',
+      //   start:  '2018/11/22 17:18:00',
+      //   end: '2018/11/22 17:35:00',
+      //   width: 50,
+      // },
+      // {
+      //   id: 45,
+      //   content: 'Price Master Error',
+      //   start:  '2018/11/22 17:26:00',
+      //  end: '2018/11/22 17:35:00',
+      //   width: 50,
+      // },
+      {
+        id: 5,
+        content: 'SM Processing 1 ',
+        start:  '2018/11/22 22:18:00',
+        end: '2018/11/22 22:35:00',
+        width: 50,
+      },
+
+        {
+        id: 55,
+        content: 'SM Processing 2',
+        start:  '2018/11/22 22:18:00',
+        end: '2018/11/22 22:35:00',
+        width: 50,
+      },
+
+/*
+      {
+        id: 59,
+        content: `Overlap AA`,
+        start:  '2018/11/23 12:50:00',
+        end: '2018/11/23 16:20:00',
+      },
+
+       {
+        id: 55,
+        content: `Overlap A`,
+        start:  '2018/11/23 14:10:00',
+        // end: '2018/11/23 22:35:00',
+      },
+      {
+        id: 56,
+        content: `Overlap B`,
+        start:  '2018/11/23 14:00:00',
+        end: '2018/11/23 14:20:00',
+      },
+      {
+        id: 57,
+        content: `Overlap B`,
+        start:  '2018/11/23 14:09:00',
+      }*/
+    ]);
+
+  timeline.fit();
+</script>
+</body>
+</html>
