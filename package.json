@@ -1,15 +1,14 @@
 {
-  "name": "vis",
-  "version": "4.21.0",
-  "description": "A dynamic, browser-based visualization library.",
-  "homepage": "http://visjs.org/",
+  "name": "clustered-vis-timeline",
+  "version": "1.0.1",
+  "description": "",
   "license": "(Apache-2.0 OR MIT)",
   "repository": {
     "type": "git",
-    "url": "git://github.com/almende/vis.git"
+    "url": "git+https://github.com/konsvarl/vis.git"
   },
   "bugs": {
-    "url": "https://github.com/almende/vis/issues"
+    "url": "https://github.com/konsvarl/vis.git/issues"
   },
   "keywords": [
     "vis",
@@ -72,5 +71,13 @@
     "uuid": "^3.1.0",
     "webpack": "^3.3.0",
     "yargs": "^8.0.2"
-  }
+  },
+  "homepage": "https://github.com/konsvarl/vis#readme",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "lib": "lib",
+    "test": "test"
+  },
+  "author": "konsvarl"
 }
