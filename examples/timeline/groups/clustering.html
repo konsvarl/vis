@@ -4,38 +4,41 @@
   <title>Timeline clustering demo</title>  
   <script src="https://unpkg.com/moment@2.22.2/moment.js"></script> 
   <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
-
+  <script src="../../../docs/js/jquery.min.js"></script>
   <script src="../../../dist/vis.js"></script>
   <link href="../../../dist/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<div id="timeline"></div>
+  <button class="zoom" data-dir="1">Zomm in</button>
+  <button class="zoom" data-dir="-1">Zoom out</button>
+  </br>
+  <input type="checkbox" id="clusterCheckbox">Cluster timeline items</button>
 
-<script type="text/javascript">
-  function getRandomArbitrary(min, max) {
-     return Math.round(Math.random() * (max - min) + min);
-  }
+  <div id="timeline"></div>
+  
+  <script type="text/javascript">
+    function getRandomArbitrary(min, max) {
+      return Math.round(Math.random() * (max - min) + min);
+    }
 
-  function getRandomSignum() {
-    return Math.round(Math.random()) ? 1 : -1;
-  }
+    function getRandomSignum() {
+      return Math.round(Math.random()) ? 1 : -1;
+    }
+  
+    var names = ['Group 1', 'Group 2', 'Group 3', 'Group 4'];
+    var groups = new vis.DataSet();
+    var groupsCount = 0;
+    for (var i in names) {
+        var name = names[i];
+        groups.add({id: name, content: name});
+    }
 
-  var names = ['Group 1', 'Group 2', 'Group 3', 'Group 4'];
-  var groups = new vis.DataSet();
-  let groupsCount = 0;
-  for (var i in names) {
-      var name = names[i];
-      groups.add({id: name, content: name});
-  }
-
-
-  const container = document.getElementById('timeline');
   const base = moment();
-  const totalDaysCount =10;
+  const totalDaysCount = 1;
   const offsets = [];
 
-  const before = [];//Array.from(new Array(totalDaysCount),function (val,index) {return index - totalDaysCount + 1;});
-  const after = [];//Array.from(new Array(totalDaysCount),function(val,index) {return index + 1;});
+  const before = [Array.from(new Array(totalDaysCount),function (val,index) {return index - totalDaysCount + 1;})];
+  const after = [Array.from(new Array(totalDaysCount),function(val,index) {return index + 1;})];
 
   for (var i in before) {
       var offset = before[i];
@@ -58,8 +61,7 @@
   const timeLineData = [];
   let nodeIndex = 0;
   for (var i in clusterCenters) {
-	let clusterCenter= clusterCenters[i];	
-  //for(let clusterCenter of clusterCenters) {
+	  let clusterCenter= clusterCenters[i];	
     for (let itemsInClusterCount = 0; itemsInClusterCount < 20; ++itemsInClusterCount) {
       const minutesShift = getRandomArbitrary(1, 60)*getRandomSignum();
       const hoursShift = getRandomArbitrary(1, 5)*getRandomSignum();
@@ -75,6 +77,7 @@
       ++nodeIndex;
 
       const currentGroup = names[getRandomArbitrary(0, names.length - 1)];
+
       timeLineData.push({
         id: nodeIndex,
         content: "Order: " + nodeIndex,
@@ -83,32 +86,11 @@
         width: 50,
         group: currentGroup
       });
-
-      // for (let verticalIndex = 0; verticalIndex <= 1; ++verticalIndex) {
-      //     timeLineData.push({
-      //     id: ++nodeIndex,
-      //     content: `Order: ${nodeIndex}`,
-      //     start: start.format('YYYY/MM/DD HH:mm:ss'),
-      //     end: end.format('YYYY/MM/DD HH:mm:ss'),
-      //     width: 50
-      //   });
-
-      //   timeLineData.push({
-      //     id: ++nodeIndex,
-      //     content: `Order: ${nodeIndex}`,
-      //     start: start.format('YYYY/MM/DD HH:mm:ss'),
-      //     end: end.format('YYYY/MM/DD HH:mm:ss'),
-      //     width: 50
-      //   });
-      // }
     }
   }
+    
 
-  var options = {
-    cluster: {
-      titleTemplate: "Cluster containing {count} events. Zoom in to see the individual events.",
-      // sizeToContent: true
-    },
+  var defaultOptions = {
     stack: true,
     maxHeight: 800,
     height: 800,
@@ -116,63 +98,45 @@
       if (item.isCluster) {
         return `<div style="width:100%;height: 100%; boder-left:1px; border-color:black"> Cluster ${item.data.items.length}</div>`;
       } 
-
       return item.content;
     }
-    
-    // start: new Date(),
-    // end: new Date(1000*60*60*24 + (new Date()).valueOf()),
   };
+  var container = document.getElementById('timeline');
   var timeline = new vis.Timeline(container);
-  timeline.setOptions(options);
-  //timeline.setGroups(groups);
-  //timeline.setItems(timeLineData);
+  timeline.setOptions(defaultOptions);
 
-  timeline.setItems([
-      {
-         id: 1,
-         content: 'Some event 1',
-         start: '2018/11/22 17:08:00',
-         end:  '2018/11/22 17:20:00',
-         width: 50,
-       }, {
-         id: 2,
-         content: 'Some event 2',
-         start: '2018/11/22 17:10:00',
-          end:  '2018/11/22 17:15:00',
-         width: 50
-       }, {
-         id: 3,
-         content: 'Some event 3',
-         start:  '2018/11/22 17:15:00',
-         end: '2018/11/22 17:30:00',
-         width: 50,
-       },
-       {
-         id: 4,
-         content: 'Some event 4',
-         start:  '2018/11/22 17:18:00',
-         end: '2018/11/22 17:35:00',
-         width: 50,
-       },
-       {
-         id: 5,
-         content: 'Some event 5',
-         start:  '2018/11/22 17:26:00',
-        end: '2018/11/22 17:35:00',
-         width: 50,
-       },
-      {
-        id: 6,
-        content: 'Some event 6',
-        start:  '2018/11/22 22:18:00',
-        end: '2018/11/22 22:35:00',
-        width: 50,
-      },      
-
-    ]);
-
+  timeline.setGroups(groups);
+  timeline.setItems(timeLineData);
+  
   timeline.fit();
-</script>
+
+  $(".zoom").on("click", function(){
+      var dir = $(this).data('dir');
+      var range = timeline.getWindow();
+      var interval = range.end - range.start;
+
+      timeline.setWindow({
+          start: range.start.valueOf() - interval * dir * 0.2,
+          end:   range.end.valueOf()   + interval * dir * 0.2
+      });
+  });
+  $('#clusterCheckbox').change(function() {
+    var options = {};
+    if(this.checked) {
+    var clusterOpts = {
+      cluster: {
+        titleTemplate: "Cluster containing {count} events. Zoom in to see the individual events.",
+      }
+    };
+    Object.assign(options, defaultOptions, clusterOpts);
+    } else {
+    Object.assign(options, defaultOptions);
+    }
+    timeline.setOptions(options);
+
+    timeline.setGroups(groups);
+    timeline.setItems(timeLineData);
+  });
+  </script>
 </body>
 </html>
