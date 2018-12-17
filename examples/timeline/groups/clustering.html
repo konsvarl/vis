@@ -7,6 +7,11 @@
   <script src="../../../docs/js/jquery.min.js"></script>
   <script src="../../../dist/vis.js"></script>
   <link href="../../../dist/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+  <style type="text/css" media="screen">
+    .vis-item.vis-cluster{
+      min-width: 75px;
+    }
+  </style>
 </head>
 <body>
   <button class="zoom" data-dir="1">Zomm in</button>
@@ -127,6 +132,7 @@
     var clusterOpts = {
       cluster: {
         titleTemplate: "Cluster containing {count} events. Zoom in to see the individual events.",
+        showStipes: true
       }
     };
     Object.assign(options, defaultOptions, clusterOpts);
